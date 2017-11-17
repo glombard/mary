@@ -1,0 +1,143 @@
+<!--
+11/16/2017: OO in JS
+
+This is a simple demo to demonstrate OO concept
+of encapsulation: instead of functions and global
+variables we move the state and methods into classes.
+
+Old-fashioned JS doesn't have a "class" keyword,
+but the "function" keyword is used to for classes.
+
+The demo also touches a little bit on class
+inheritance in JS.
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Class</title>
+    <script>
+
+        // This is the "non-OO" way with bad GLOBAL state:
+        var dogMood = "excited";
+
+        function dogSound() {
+            if (dogMood == "angry") {
+                return "growl";
+            } else {
+                return "woof";
+            }
+        }
+
+        // Now the "OO" way:
+        // JS doesn't have a "class" keyword, but
+        // we can simulate classes with functions...
+        // Inheritance is done using B.prototype = new A()...
+
+        function Animal(name) {
+            this.name = name;
+            this.mood = "relaxed"; // Default mood is happy!
+
+            this.getName = function () {
+                return this.name;
+            };
+
+            this.getMood = function () {
+                return this.mood;
+            };
+
+            this.setMood = function (newMood) {
+                this.mood = newMood;
+            };
+        }
+
+        Dog.prototype = new Animal();
+        Dog.prototype.constructor = Dog;
+
+        function Dog(name) {
+            this.name = name;
+
+            this.sound = function () { // sound() method is an anonymous function...
+                if (this.getMood() == "angry") {
+                    return "growl";
+                } else {
+                    return "woof";
+                }
+            }
+        }
+
+        Cat.prototype = new Animal();
+        Cat.prototype.constructor = Cat;
+
+        function Cat(name) {
+            this.name = name;
+
+            this.sound = function () { // sound() method is an anonymous function...
+                if (this.getMood() == "angry") {
+                    return "hiss";
+                } else if (this.getMood() == "relaxed") {
+                    return "purr";
+                } else {
+                    return "meow";
+                }
+            }
+        }
+
+        function PetOwner() {
+            this.playWithPet = function () {
+                var pet = this.getRandomPet();
+                this.taunt(pet);
+                return pet.getName() + ": " + pet.sound();
+            };
+
+            this.getRandomPet = function () {
+                if (Math.random() < 0.5) {
+                    return new Dog("Pluto");
+                } else {
+                    return new Cat("Tom");
+                }
+            };
+
+            this.taunt = function (animal) {
+                if (Math.random() < 0.4) {
+                    // Sometimes the time the animal gets angry
+                    animal.setMood("angry");
+                } else if (Math.random() < 0.2) {
+                    // And sometimes excited
+                    animal.setMood("excited");
+                }
+            }
+        }
+
+        function initialize() {
+            var owner = new PetOwner();
+            var sound = owner.playWithPet();
+
+            var div = document.getElementById("output");
+            div.innerText = sound;
+        }
+
+        // This line below just means:
+        // don't execute any of the above yet,
+        // but once the entire browser window is loaded,
+        // then execute the initialize function.
+        //
+        // The reason we need this, is because
+        // we want to show the output in an HTML DIV,
+        // but it doesn't exist yet until the doc
+        // is done loading...
+        //
+        // Normally we'd do 'onload' with an
+        // anonymous function, but separated it
+        // out to 'initialize' here for clarity.
+        window.onload = initialize;
+    </script>
+</head>
+<body>
+
+<div id="output">
+</div>
+
+</body>
+</html>
